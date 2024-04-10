@@ -11,6 +11,10 @@ class ToDoListController {
     myTasks.add(taskModelItem);
   }
 
+  void deleteItem({required TaskModel remove}) {
+    myTasks.remove(remove);
+  }
+
   void clearList() {
     myTasks.clear();
     title = '';
