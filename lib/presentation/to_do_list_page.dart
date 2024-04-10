@@ -1,6 +1,8 @@
 import 'package:ciolfi_to_do_list/controller/to_do_list_controller.dart';
 import 'package:flutter/material.dart';
 
+import '../model/task_model.dart';
+
 class TodoListPage extends StatefulWidget {
   const TodoListPage({super.key});
 
@@ -75,6 +77,35 @@ class _TodoListPageState extends State<TodoListPage> {
                           style: const TextStyle(fontSize: 12),
                         ),
                         subtitle: Text(toDoListController.myTasks[index].title),
+                        trailing: IconButton(
+                            onPressed: () {
+                              TaskModel deletedItem =
+                                  toDoListController.myTasks[index];
+                              int deletedItemPosition = toDoListController
+                                  .myTasks
+                                  .indexOf(toDoListController.myTasks[index]);
+
+                              setState(() {
+                                toDoListController.deleteItem(
+                                    remove: toDoListController.myTasks[index]);
+                              });
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Tarefa ${deletedItem.title} removida com sucesso'),
+                                  action: SnackBarAction(
+                                      label: 'Desfazer',
+                                      onPressed: () {
+                                        setState(() {
+                                          toDoListController.myTasks.insert(
+                                              deletedItemPosition, deletedItem);
+                                        });
+                                      }),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.delete)),
                       ),
                     ),
                   ),
@@ -94,10 +125,29 @@ class _TodoListPageState extends State<TodoListPage> {
                   ),
                   ElevatedButton(
                       onPressed: () {
-                        toDoListController.myTasks.clear();
-                        setState(() {
-                          textEditingController.clear();
-                        });
+                        showDialog(
+                          context: context,
+                          builder: ((context) => AlertDialog(
+                                title: const Text('Limpar tudo?'),
+                                content: const Text(
+                                    'Você tem realmente certeza disso?'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: const Text('Cancelar')),
+                                  TextButton(
+                                      onPressed: () {
+                                        toDoListController.myTasks.clear();
+                                        setState(() {
+                                          textEditingController.clear();
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Confirmar'))
+                                ],
+                              )),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepPurpleAccent,
