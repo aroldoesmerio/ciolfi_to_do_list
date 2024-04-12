@@ -43,6 +43,7 @@ class _TodoListPageState extends State<TodoListPage> {
                     onPressed: () {
                       toDoListController.addList(
                           title: textEditingController.text);
+
                       setState(() {});
                     },
                     style: ElevatedButton.styleFrom(
